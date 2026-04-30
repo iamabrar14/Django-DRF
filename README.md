@@ -68,24 +68,7 @@ The API will be available at `http://127.0.0.1:8000/`
 
 ---
 
-## 📁 Project Structure
 
-```
-├── myapp/
-│   ├── models.py          # Database models
-│   ├── serializers.py     # DRF serializers
-│   ├── views.py           # API views
-│   ├── urls.py            # App URL routing
-│   └── tests.py           # Unit tests
-├── project/
-│   ├── settings.py        # Project settings
-│   └── urls.py            # Root URL config
-├── requirements.txt       # Python dependencies
-├── .gitignore
-└── README.md
-```
-
----
 
 ## 📝 Notes & Progress
 
