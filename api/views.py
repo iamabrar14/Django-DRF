@@ -3,26 +3,23 @@ from django.db.models import Max
 from api.serializers import ProductSerializer,OrderSerializer,OrderItemSerializer,ProductInfoSerializer
 from api.models import Product,Order,OrderItem
 from rest_framework.response import Response
+from rest_framework import generics
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 
-@api_view(['GET']) #API view that accepts GET requests
-def product_list(request):
-    products=Product.objects.all() #Get all products from database
-    serializer=ProductSerializer(products,many=True) #Serialize the products
-    return Response(serializer.data) #Return the serialized data as a response
+class ProductListAPIView(generics.ListAPIView):
+    queryset=Product.objects.all() #Get all products from database
+    serializer_class=ProductSerializer #Use ProductSerializer to serialize the data
 
-@api_view(['GET']) 
-def product_detail(request,pk): #This function accepts a primary key (pk) as a parameter to retrieve a specific product
-    product=get_object_or_404(Product,pk=pk)
-    serializer=ProductSerializer(product) 
-    return Response(serializer.data) 
+class ProductDetailAPIView(generics.RetrieveAPIView): #Retrive when we want to get a single product by its primary key
+     queryset=Product.objects.filter(stock__gt=0) #Only retrieve products that are in stock (stock greater than 0)
+     serializer_class=ProductSerializer
+     lookup_url_kwarg="product_id"  #Use product_id as the URL parameter to look up the product (in urls.py we will use <int:product_id)
 
-@api_view(['GET']) 
-def order_list(request):
-    orders=Order.objects.prefetch_related('items__product')#Get all orders and prefetch related order items to optimize  
-    serializer=OrderSerializer(orders,many=True) 
-    return Response(serializer.data) 
+
+class OrderListAPIView(generics.ListAPIView):
+    queryset=Order.objects.prefetch_related('items__product')#Use prefetch_related to optimize database queries by fetching related OrderItem and Product data in a single query
+    serializer_class=OrderSerializer #Use OrderSerializer to serialize the data
 
 @api_view(['GET'])
 def product_info(request):
